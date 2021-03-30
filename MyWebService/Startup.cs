@@ -21,14 +21,17 @@ using MyModel;
 namespace MyWebServiceModel
 {
     public class Startup
-    {
+    {        
+        //日志容器
         public static ILoggerRepository LogRepository { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
+            //配置日志组件log4net
             LogRepository = LogManager.CreateRepository("NETCoreReposity");
             XmlConfigurator.Configure(LogRepository,new FileInfo(fileName:"log4net.config"));
+
         }
 
         public IConfiguration Configuration { get; }
@@ -41,7 +44,7 @@ namespace MyWebServiceModel
             services.AddControllersWithViews();
             #endregion
 
-            #region 注册Swagger
+            #region  Swagger注册
             //注册swagger服务  NuGet下载：Swashbuckle.AspNetCore   详情参考：https://blog.csdn.net/biubiiu/article/details/100976919
             services.AddSwaggerGen(m =>
             {
@@ -52,6 +55,8 @@ namespace MyWebServiceModel
                 });
             });
             #endregion
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +110,7 @@ namespace MyWebServiceModel
             #endregion
 
 
+            #region Swagger中间件配置
             //启用中间件服务生成Swagger作为JSON终结点 
             //注意点
             //① 与下文中UseEndPoint()的位置关系，处于前面的生效
@@ -118,6 +124,8 @@ namespace MyWebServiceModel
 
                 c.RoutePrefix = "swagger";//决定访问Swagger UI的路径，可在 http://localhost:<port>/swagger 找到 Swagger UI　　
             });
+            #endregion
+
 
 
             //Model转换配置，直接as 转换，省去挨个儿赋值
